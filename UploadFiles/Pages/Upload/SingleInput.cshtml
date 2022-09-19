@@ -9,32 +9,35 @@
 <h4>Single Input</h4>
 <hr />
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-4">
         <form method="post" enctype='multipart/form-data'>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             @*<input accept="image/*" type='file' id="imgInputut" />*@
             @*<input type="file" accept=".pdf,image/*,video/* id="addFileInput" />*@
             <div class="form-group">
-                <label asp-for="MultiAppFile.Name" class="form-label"></label>
+                <label asp-for="MultiAppFile.Name" class="control-label"></label>
                 <input asp-for="MultiAppFile.Name" class="form-control" />
                 <span asp-validation-for="MultiAppFile.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-            <input type="file" accept="video/mp4,image/*,video/*" id="addFileInput" />
-            <input type="file" asp-for="MultiAppFile.Files" id="fileInput" hidden multiple>
+                <label asp-for="MultiAppFile.Files" class="control-label"></label>
+                <input type="file" accept="video/mp4,image/*,video/*" id="addFileInput" />
+                <input type="file" asp-for="MultiAppFile.Files" id="fileInput" hidden multiple>
             </div>
-            <div id="imgpreview"></div>
-            <table class="table table-info" id="imagetable">
-                <thead>
-                    <tr>
-                        <th>Files To Upload</th>
-                        <th>Size</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                  <tbody>
-                  </tbody>
-            </table>
+            @*<div id="imgpreview"></div>*@
+            <div class="form-group">
+                <table class="table table-info" id="imagetable">
+                    <thead>
+                        <tr>
+                            <th>Files To Upload</th>
+                            <th>Size</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                      <tbody>
+                      </tbody>
+                </table>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Submit" class="btn btn-primary" />
             </div>
