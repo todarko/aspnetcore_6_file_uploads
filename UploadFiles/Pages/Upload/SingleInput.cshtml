@@ -1,0 +1,144 @@
+﻿@page
+@model UploadFiles.Pages.Upload.SingleInputModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<h4>Single Input</h4>
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form method="post" enctype='multipart/form-data'>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @*<input accept="image/*" type='file' id="imgInputut" />*@
+            @*<input type="file" accept=".pdf,image/*,video/* id="addFileInput" />*@
+            <div class="form-group">
+                <label asp-for="MultiAppFile.Name" class="form-label"></label>
+                <input asp-for="MultiAppFile.Name" class="form-control" />
+                <span asp-validation-for="MultiAppFile.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+            <input type="file" accept="video/mp4,image/*,video/*" id="addFileInput" />
+            <input type="file" asp-for="MultiAppFile.Files" id="fileInput" hidden multiple>
+            </div>
+            <div id="imgpreview"></div>
+            <table class="table table-info" id="imagetable">
+                <thead>
+                    <tr>
+                        <th>Files To Upload</th>
+                        <th>Size</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                  <tbody>
+                  </tbody>
+            </table>
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        "use strict";
+
+        const fileInput = document.querySelector('#fileInput')
+        var uploadCount = 0;
+        var max = 2;
+        var fileIndex = 0;
+        function fileSize(b) {
+            var u = 0, s=1024;
+            while (b >= s || -b >= s) {
+                b /= s;
+                u++;
+            }
+            return (u ? b.toFixed(1) + ' ' : b) + ' KMGTPEZY'[u] + 'B';
+        }
+        addFileInput.addEventListener('change', () => {
+          const [file] = addFileInput.files
+          const files = getFiles(fileInput)
+          const newFiles = getFiles(document.querySelector('#addFileInput'))
+          files.push(...newFiles)
+          $("#addFileInput").val('');
+
+          if (file) {
+              var tbodyRef = document.getElementById('imagetable').getElementsByTagName('tbody')[0];
+                var newRow = tbodyRef.insertRow();
+                var nameCell = newRow.insertCell();
+                var sizeCell = newRow.insertCell();
+                var removeCell = newRow.insertCell();
+                var nameText = document.createTextNode(file.name);
+                var sizeText = document.createTextNode('(' + fileSize(file.size) + ')');
+
+                var button = document.createElement("span");
+                button.classList.add("badge");
+                button.classList.add("rounded-pill");
+                button.classList.add("bg-warning");
+                button.setAttribute("onclick",'removeFile(this)');
+                button.style.cursor = "pointer";
+                button.innerHTML = "X";
+                nameCell.appendChild(nameText);
+                sizeCell.appendChild(sizeText);
+                removeCell.appendChild(button);
+                fileIndex++;
+                uploadCount++;
+                if(uploadCount === max)
+                {
+                    addFileInput.setAttribute('disabled', '');
+                }
+              ///img preview
+            //var img = document.createElement('img');
+            //img.classList.add("img-fluid");
+            //img.classList.add("img-thumbnail");
+            //img.style.height = "50 !important";
+            //img.src = URL.createObjectURL(file);
+            //document.getElementById('imgpreview').appendChild(img);
+          }
+          setFiles(fileInput, files)
+        })
+        
+        function removeFile(row) {
+          //index of file
+          var rowIndex = $(row).closest('tr').index();
+          //index of row
+          var d = row.parentNode.parentNode.rowIndex;
+          const files = getFiles(fileInput)
+          files.splice(rowIndex, 1)
+          setFiles(fileInput, files)
+          fileIndex--;
+          uploadCount--;
+          document.getElementById('imagetable').deleteRow(d); 
+
+          console.log(uploadCount)
+          console.log(max)
+            if(uploadCount < max)
+            {
+                addFileInput.removeAttribute('disabled');
+            }
+        } 
+
+        function getFiles(input){
+          const files = new Array(input.files.length)
+          for(let i = 0; i < input.files.length; i++)
+            files[i] = input.files.item(i)
+          return files
+        }
+
+        function setFiles(input, files){
+          const dataTransfer = new DataTransfer()
+          for(const file of files)
+            dataTransfer.items.add(file)
+          input.files = dataTransfer.files
+        }
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

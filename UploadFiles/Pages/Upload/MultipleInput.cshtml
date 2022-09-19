@@ -1,0 +1,77 @@
+﻿@page
+@model UploadFiles.Pages.Upload.MultipleInputModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<h4>Multiple Input</h4>
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form method="post" enctype='multipart/form-data'>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input accept="video/mp4,image/*,video/*" type='file' id="imgInput" />
+            <table class="table table-striped">
+                <tr>
+                    <th>Name</th>
+                    <th>Preview</th>
+                </tr>
+                @for (var i = 0; i < 2; i++)
+                {
+                    <tr id="[@i].Row" >
+                        <td>
+                            <div class="form-group">
+                                <input asp-for="AppFile[i].Name" class="form-control" readonly />
+                                <span asp-validation-for="AppFile[i].Name" class="text-danger"></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <img id="Preview[@i]" class="form-control" />
+                                <input asp-for="AppFile[i].FormFile" class="form-control" hidden />
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        "use strict";
+        var uploadCount = 0;
+        var max = 2;
+        imgInput.onchange = evt => {
+            const [file] = imgInput.files
+            if (file) {
+                var row = document.getElementById("[" + uploadCount + "].Row");
+                var preview = document.getElementById("Preview[" + uploadCount + "]");
+                var content = document.getElementById("AppFile_" + uploadCount + "__FormFile");
+                document.getElementById("AppFile_" + uploadCount + "__Name").value = file.name;
+                preview.src = URL.createObjectURL(file);
+                content.files = imgInput.files;
+                uploadCount++;
+                if(uploadCount === max)
+                {
+                    imgInput.setAttribute('disabled', '');
+                }
+                console.log(content.files)
+            }
+            //can't clear input of choose file for some reason, otherwise the uploads are null
+            //$("#imgInput").val('');
+        }
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
