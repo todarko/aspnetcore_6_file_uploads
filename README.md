@@ -1,4 +1,4 @@
-# Uploading files in ASP.NET Core Web App using Razor Pages
+# Uploading files in ASP.NET 6 Core Web App using Razor Pages
 
 ### Pages/Upload/SingleInput.cshtml/.cs
 
